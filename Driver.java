@@ -1,11 +1,12 @@
-import java.io.*;
-
 /**
  * CPSC 501
  * Driver to create output using inspector
  *
  * @author Jonathan Hudson
  */
+
+import java.io.*;
+
 public class Driver {
 
     public static void main(String[] args) throws Exception {
