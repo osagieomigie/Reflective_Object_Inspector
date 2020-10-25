@@ -5,7 +5,6 @@
  * @author Jonathan Hudson, Osa Omigie 
  */
 
-package reflective_object_inspector_cpsc_501;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -41,6 +40,7 @@ public class Inspector {
     	}
     	
     	inspectInterfaces(c, obj, recursive, depth);
+    	inspectConstructors(c, obj, recursive, depth);
     }
     
     private void inspectInterfaces(Class c, Object obj, boolean recursive, int depth) {
@@ -62,6 +62,65 @@ public class Inspector {
     	}else {
     		System.out.println(tmpTab + "Interfaces-> NONE");
     	}
+    }
+    
+    private void inspectConstructors(Class c, Object obj, boolean recursive, int depth) {
+    	// calculate depth 
+    	StringBuilder tmpTab = new StringBuilder("");
+    	if (depth > 0) { 
+	    	for(int i = 0; i < depth; i++) {
+	    		tmpTab.append("\t");
+	    	}
+    	}
+    	
+    	// print constructors 
+    	Constructor<?>[] constructors = c.getDeclaredConstructors();
+    	System.out.println(tmpTab + String.format("CONSTRUCTORS( %s )", c.getName()));
+    	if (constructors.length > 0) {
+    		System.out.println(tmpTab + "Constructors-> ");
+	        for (Constructor<?> aConstructor : constructors) {
+	        	System.out.println(tmpTab + " CONSTRUCTOR");
+	        	
+	        	// print name of constructor
+	            System.out.println(tmpTab +"  Name: " + aConstructor.getName());
+	            
+	            // print exceptions of constructor 
+	            Class<?>[] tmpExceptions = aConstructor.getExceptionTypes();
+	            if (tmpExceptions.length > 0) {
+	            	System.out.println(tmpTab +"  Exceptions->");
+	            	for(Class<?> exception : tmpExceptions) {
+	            		System.out.println(tmpTab +"  class " + exception.getName());
+	            	}
+	            }else {
+	            	System.out.println(tmpTab +"  Exceptions-> NONE");
+	            }
+	            
+	            // print parameter types of constructor 
+	            Class<?>[] tmpParameters = aConstructor.getParameterTypes();
+	            if (tmpParameters.length > 0) {
+	            	System.out.println(tmpTab +"  Parameter types:");
+	            	for(Class<?> parameter : tmpParameters) {
+	            		if(parameter.isPrimitive())
+	            			System.out.println(tmpTab + "   "+ parameter.getName());
+	            		else
+	            			System.out.println(tmpTab + "   class "+ parameter.getName());
+	            	}
+	            }else {
+	            	System.out.println(tmpTab +"  Parameter types-> NONE");
+	            }
+	            
+	            // print modifiers of constructor 
+	            if ( Modifier.toString(aConstructor.getModifiers()).isEmpty()) {
+	            	System.out.println(tmpTab +"  Modifiers: NONE");
+	            }else {
+	            	System.out.println(tmpTab + "  Modifiers: " + Modifier.toString(aConstructor.getModifiers()));
+	            }
+	            
+	        }
+    	}else {
+    		System.out.println(tmpTab + "Constructors-> NONE");
+    	}
+    	
     }
 
 }
