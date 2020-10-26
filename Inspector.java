@@ -41,6 +41,7 @@ public class Inspector {
     	
     	inspectInterfaces(c, obj, recursive, depth);
     	inspectConstructors(c, obj, recursive, depth);
+    	inspectMethods(c, obj, recursive, depth);
     }
     
     private void inspectInterfaces(Class<?> c, Object obj, boolean recursive, int depth) {
@@ -124,6 +125,68 @@ public class Inspector {
     		System.out.println(tmpTab + "Constructors-> NONE");
     	}
     	
+    }
+    
+    private void inspectMethods(Class<?> c, Object obj, boolean recursive, int depth) {
+    	// calculate depth 
+    	StringBuilder tmpTab = new StringBuilder("");
+    	if (depth > 0) { 
+	    	for(int i = 0; i < depth; i++) {
+	    		tmpTab.append("\t");
+	    	}
+    	}
+    	
+    	System.out.println(tmpTab + String.format("METHODS( %s )", c.getName()));
+    	
+    	Method [] methods = c.getDeclaredMethods();
+    	
+    	if(methods.length > 0) {
+    		System.out.println(tmpTab + "Methods-> ");
+	    	for (Method m : methods) {
+	    		System.out.println(tmpTab + " METHOD");
+	    		
+	    		// print method name
+	    		System.out.println(tmpTab + "  Name: " + m.getName());
+	    		
+	    		// print method exceptions 
+	    		Class<?> [] exps = m.getExceptionTypes();
+	    		if (exps.length > 0) {
+	    			System.out.println(tmpTab + "  Exceptions-> ");
+	    			for (Class <?> tmpExp : exps) {
+	    				System.out.println(tmpTab +"  class " + tmpExp.getName());
+	    			}
+	    		}else {
+	    			System.out.println(tmpTab + "  Exceptions-> NONE");
+	    		}
+	    		
+	    		// print parameter types of method 
+	            Class<?>[] tmpParameters = m.getParameterTypes();
+	            if (tmpParameters.length > 0) {
+	            	System.out.println(tmpTab +"  Parameter types:");
+	            	for(Class<?> parameter : tmpParameters) {
+	            		if(parameter.isPrimitive())
+	            			System.out.println(tmpTab + "  "+ parameter.getName());
+	            		else
+	            			System.out.println(tmpTab + "  class "+ parameter.getName());
+	            	}
+	            }else {
+	            	System.out.println(tmpTab +"  Parameter types-> NONE");
+	            }
+	            
+	            // print method return type 
+	            System.out.println(tmpTab + "  Return type: " + m.getReturnType().getName());
+	            
+	            // print modifiers of constructor 
+	            if ( Modifier.toString(m.getModifiers()).isEmpty()) {
+	            	System.out.println(tmpTab +"  Modifiers: NONE");
+	            }else {
+	            	System.out.println(tmpTab + "  Modifiers: " + Modifier.toString(m.getModifiers()));
+	            }
+	    	}
+    	}else {
+    		System.out.println(tmpTab + "Methods-> NONE");
+    	}
+	    	
     }
 
 }
