@@ -6,17 +6,17 @@
  */
 
 import java.lang.reflect.*;
-import java.util.*;
+//import java.util.*;
 
 public class Inspector {
 
     public void inspect(Object obj, boolean recursive) {
-        Class c = obj.getClass();
+        Class<?> c = obj.getClass();
         inspectClass(c, obj, recursive, 0);
     }
     
 
-    private void inspectClass(Class c, Object obj, boolean recursive, int depth) {
+    private void inspectClass(Class<?> c, Object obj, boolean recursive, int depth) {
     	// print declaring class
     	StringBuilder tmpTab = new StringBuilder("");
     	if (depth > 0) { 
@@ -28,12 +28,12 @@ public class Inspector {
     	System.out.println(tmpTab + "CLASS");
     	System.out.println(tmpTab + String.format("Class: %s", c.getName()));
     	
-    	Class superClass = c.getSuperclass();
+    	Class<?> superClass = c.getSuperclass();
   
     	// print super class 
     	if(superClass != null) {
     			System.out.println(tmpTab + "SUPERCLASS -> Recursively Inspect");
-    			System.out.println(tmpTab + String.format("Super Class: %s", superClass.getName()));
+    			System.out.println(tmpTab + String.format("SuperClass: %s", superClass.getName()));
     			inspectClass(superClass, obj, recursive, depth+1);
     	}else {
     		System.out.println(tmpTab + "SuperClass: NONE");
@@ -43,7 +43,7 @@ public class Inspector {
     	inspectConstructors(c, obj, recursive, depth);
     }
     
-    private void inspectInterfaces(Class c, Object obj, boolean recursive, int depth) {
+    private void inspectInterfaces(Class<?> c, Object obj, boolean recursive, int depth) {
     	// calculate depth 
     	StringBuilder tmpTab = new StringBuilder("");
     	if (depth > 0) { 
@@ -57,14 +57,17 @@ public class Inspector {
     	if (interfaces.length > 0) {
     		System.out.println(tmpTab + "Interfaces-> ");
 	        for (Class<?> anInterface : interfaces) {
+	        	System.out.println(tmpTab + " INTERFACE -> Recursively Inspect");
 	            System.out.println(tmpTab +" " + anInterface.getName());
+	            // recursively recurse on interfaces 
+	            inspectClass(anInterface, obj, recursive, depth+1);
 	        }
     	}else {
     		System.out.println(tmpTab + "Interfaces-> NONE");
     	}
     }
     
-    private void inspectConstructors(Class c, Object obj, boolean recursive, int depth) {
+    private void inspectConstructors(Class<?> c, Object obj, boolean recursive, int depth) {
     	// calculate depth 
     	StringBuilder tmpTab = new StringBuilder("");
     	if (depth > 0) { 
