@@ -5,7 +5,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class test {
 	
 	private final static ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -66,7 +65,7 @@ public class test {
 		outContent.reset(); // clear buffer 
 		new Inspector().inspect(testA, false);
 		String result = outContent.toString().trim(); // remove trailing spaces 
-		assertTrue(result.contains(" CONSTRUCTOR\n  Name: reflective_object_inspector_cpsc_501.ClassA")); 
+		assertTrue(result.contains(" CONSTRUCTOR\n  Name: reflective_object_inspector_cpsc_501.ClassA\n  Exceptions-> NONE\n  Parameter types:\n   int\n  Modifiers: public")); 
 	}
 	
 	@Test
