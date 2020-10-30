@@ -264,7 +264,17 @@ public class Inspector {
     		// inspect array
     		inspectFieldArray(f, obj, recursive, depth);
     	}else { 
-    		// inspect object 
+    		// inspect object
+    		Object value = getValue(f, obj);
+    		if (value != null) {
+	    		System.out.println(tmpTab + "  Value (ref): " + value.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(value)) );
+				
+				// inspect class if recursive true 
+				if (recursive) {
+					System.out.println(tmpTab + "    -> Recursively inspect");
+					inspectClass(value.getClass(), f, recursive, depth+1);
+				}
+    		}
     	}
     	
     }
