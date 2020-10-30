@@ -73,10 +73,10 @@ public class test {
 		outContent.reset(); // clear buffer 
 		new Inspector().inspect(testA, false);
 		String result = outContent.toString().trim(); // remove trailing spaces 
-		assertTrue(result.contains("\t METHOD\n\t  Name: finalize\n\t  Exceptions-> \n\t  class java.lang.Throwable\n\t  Parameter types-> NONE")); 
-		assertTrue(result.contains("\t METHOD\n\t  Name: wait\n\t  Exceptions-> \n\t  class java.lang.InterruptedException\n\t  Parameter types:\n\t  long")); 
+		assertTrue(result.contains("\t METHOD\n\t  Name: finalize\n\t  Exceptions-> \n\t  class java.lang.Throwable\n\t  Parameter types-> NONE\n\t  Return type: void\n\t  Modifiers: protected")); 
+		assertTrue(result.contains("\t METHOD\n\t  Name: wait\n\t  Exceptions-> \n\t  class java.lang.InterruptedException\n\t  Parameter types:\n\t   long\n\t   int")); 
 		assertTrue(result.contains("\t METHOD\n\t  Name: equals")); 
-		assertTrue(result.contains("\t METHOD\n\t  Name: toString")); 
+		assertTrue(result.contains("\t METHOD\n\t  Name: toString\n\t  Exceptions-> NONE\n\t  Parameter types-> NONE\n\t  Return type: class java.lang.String\n\t  Modifiers: public")); 
 		assertTrue(result.contains("\t METHOD\n\t  Name: hashCode")); 
 		assertTrue(result.contains("\t METHOD\n\t  Name: notifyAll\n\t  Exceptions-> NONE\n\t  Parameter types-> NONE")); 
 	}

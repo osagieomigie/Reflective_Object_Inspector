@@ -91,11 +91,21 @@ public class Inspector {
         	for(Class<?> parameter : ref) {
         		if(parameter.isPrimitive())
         			System.out.println(tmpTab + "   "+ parameter.getName());
-        		else
-        			System.out.println(tmpTab + "   class "+ parameter.getName());
+        		else if (parameter.isInterface())
+        			System.out.println(tmpTab + "   interface " + parameter.getName());
+        		else 
+        			System.out.println(tmpTab + "   class " + parameter.getName());
         	}
         }else {
         	System.out.println(tmpTab +"  Parameter types-> NONE");
+        }
+    }
+    
+    public void printModifiers(int ref, StringBuilder tabDepth) {
+    	if ( Modifier.toString(ref).isEmpty()) {
+        	System.out.println(tabDepth +"  Modifiers: NONE");
+        }else {
+        	System.out.println(tabDepth + "  Modifiers: " + Modifier.toString(ref));
         }
     }
     
@@ -123,15 +133,20 @@ public class Inspector {
 	            printParameterTypes(tmpParameters, tabDepth);
 	            
 	            // print modifiers of constructor 
-	            if ( Modifier.toString(aConstructor.getModifiers()).isEmpty()) {
-	            	System.out.println(tabDepth +"  Modifiers: NONE");
-	            }else {
-	            	System.out.println(tabDepth + "  Modifiers: " + Modifier.toString(aConstructor.getModifiers()));
-	            }
+	            printModifiers(aConstructor.getModifiers(), tabDepth);
 	        }
     	}else {
     		System.out.println(tabDepth + "Constructors-> NONE");
     	}
+    }
+    
+    public void printMethodReturnType(Class<?> ref, StringBuilder tabDepth) {
+    	if(ref.isPrimitive())
+        	System.out.println(tabDepth + "  Return type: " + ref.getName());
+		else if (ref.isInterface())
+			System.out.println(tabDepth + "  Return type: interface " + ref.getName());
+		else 
+			System.out.println(tabDepth + "  Return type: class " + ref.getName());
     }
     
     private void inspectMethods(Class<?> c, Object obj, boolean recursive, int depth) {
@@ -152,38 +167,17 @@ public class Inspector {
 	    		
 	    		// print method exceptions 
 	    		Class<?> [] exps = m.getExceptionTypes();
-	    		if (exps.length > 0) {
-	    			System.out.println(tabDepth + "  Exceptions-> ");
-	    			for (Class <?> tmpExp : exps) {
-	    				System.out.println(tabDepth +"  class " + tmpExp.getName());
-	    			}
-	    		}else {
-	    			System.out.println(tabDepth + "  Exceptions-> NONE");
-	    		}
+	    		printExceptions(exps, tabDepth);
 	    		
 	    		// print parameter types of method 
 	            Class<?>[] tmpParameters = m.getParameterTypes();
-	            if (tmpParameters.length > 0) {
-	            	System.out.println(tabDepth +"  Parameter types:");
-	            	for(Class<?> parameter : tmpParameters) {
-	            		if(parameter.isPrimitive())
-	            			System.out.println(tabDepth + "  "+ parameter.getName());
-	            		else
-	            			System.out.println(tabDepth + "  class "+ parameter.getName());
-	            	}
-	            }else {
-	            	System.out.println(tabDepth +"  Parameter types-> NONE");
-	            }
+	            printParameterTypes(tmpParameters, tabDepth);
 	            
 	            // print method return type 
-	            System.out.println(tabDepth + "  Return type: " + m.getReturnType().getName());
+	            printMethodReturnType(m.getReturnType(), tabDepth);
 	            
 	            // print modifiers of constructor 
-	            if ( Modifier.toString(m.getModifiers()).isEmpty()) {
-	            	System.out.println(tabDepth +"  Modifiers: NONE");
-	            }else {
-	            	System.out.println(tabDepth + "  Modifiers: " + Modifier.toString(m.getModifiers()));
-	            }
+	            printModifiers(m.getModifiers(), tabDepth);
 	    	}
     	}else {
     		System.out.println(tabDepth + "Methods-> NONE");
@@ -235,11 +229,7 @@ public class Inspector {
     	System.out.println(tabDepth + "  Type: " + type);
     	
     	// print field modifiers 
-    	if ( Modifier.toString(f.getModifiers()).isEmpty()) {
-        	System.out.println(tabDepth +"  Modifiers: NONE");
-        }else {
-        	System.out.println(tabDepth + "  Modifiers: " + Modifier.toString(f.getModifiers()));
-        }
+    	printModifiers(f.getModifiers(), tabDepth);
     	
     	// determine fields type, and print current value(s)
     	if(type.isPrimitive()) { 
