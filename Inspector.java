@@ -6,7 +6,6 @@
  */
 
 import java.lang.reflect.*;
-//import java.util.*;
 
 public class Inspector {
 
@@ -27,21 +26,26 @@ public class Inspector {
     	System.out.println(tmpTab + "CLASS");
     	System.out.println(tmpTab + String.format("Class: %s", c.getName()));
     	
-    	Class<?> superClass = c.getSuperclass();
-  
-    	// print super class 
-    	if(superClass != null) {
-    			System.out.println(tmpTab + "SUPERCLASS -> Recursively Inspect");
-    			System.out.println(tmpTab + String.format("SuperClass: %s", superClass.getName()));
-    			inspectClass(superClass, obj, recursive, depth+1);
+    	if (c.isArray()) {
+    		inspectArray(c, obj, recursive, depth);
     	}else {
-    		System.out.println(tmpTab + "SuperClass: NONE");
-    	}
     	
-    	inspectInterfaces(c, obj, recursive, depth);
-    	inspectConstructors(c, obj, recursive, depth);
-    	inspectMethods(c, obj, recursive, depth);
-    	inspectFields(c, obj, recursive, depth);
+	    	Class<?> superClass = c.getSuperclass();
+	  
+	    	// print super class 
+	    	if(superClass != null) {
+	    			System.out.println(tmpTab + "SUPERCLASS -> Recursively Inspect");
+	    			System.out.println(tmpTab + String.format("SuperClass: %s", superClass.getName()));
+	    			inspectClass(superClass, obj, recursive, depth+1);
+	    	}else {
+	    		System.out.println(tmpTab + "SuperClass: NONE");
+	    	}
+	    	
+	    	inspectInterfaces(c, obj, recursive, depth);
+	    	inspectConstructors(c, obj, recursive, depth);
+	    	inspectMethods(c, obj, recursive, depth);
+	    	inspectFields(c, obj, recursive, depth);
+    	}
     }
     
     private void inspectInterfaces(Class<?> c, Object obj, boolean recursive, int depth) {
@@ -218,8 +222,9 @@ public class Inspector {
     private Object getValue(Field f, Object obj) {
     	try {
     		return f.get(obj);
-    	}catch (IllegalArgumentException | NullPointerException | IllegalAccessException e){
+    	}catch (IllegalArgumentException | IllegalAccessException e){
     		System.err.println("Can't access field " + obj);
+    		
     	}
     	
     	return null;
@@ -272,63 +277,29 @@ public class Inspector {
 				// inspect class if recursive true 
 				if (recursive) {
 					System.out.println(tmpTab + "    -> Recursively inspect");
-					inspectClass(value.getClass(), f, recursive, depth+1);
+					inspectClass(value.getClass(), value, recursive, depth+1);
 				}
+    		}else {
+    			System.out.println(tmpTab + "  Value: null"); 
     		}
     	}
     	
     }
     
-    
-    private Object getArrayValue(Object obj, int index) {
-    	try {
-    		return Array.get(obj, index);
-    	}catch (IllegalArgumentException | NullPointerException | ArrayIndexOutOfBoundsException  e){
-    		System.err.println("Can't access array field " + obj);
+    private void inspectFieldArray(Field f, Object obj, boolean recursive, int depth) {
+    	// calculate depth 
+    	StringBuilder tmpTab = new StringBuilder("");
+    	if (depth > 0) { 
+	    	for(int i = 0; i < depth; i++) {
+	    		tmpTab.append("\t");
+	    	}
     	}
     	
-    	return null;
-    }
-    
-    private void inspectFieldArray(Field f, Object obj, boolean recursive, int depth) {
     	// array object
     	Object array = getValue(f, obj);
     	
     	// inspect array
     	inspectArray(f.getType(), array, recursive, depth);
-    	
-    	
-//    	// print component type
-//    	System.out.println(tmpTab + "  Component Type: " + f.getType().getComponentType());
-//    	
-//    	// print array length
-//    	int arrLength = Array.getLength(array);
-//    	System.out.println("  Length: " + arrLength);
-//    	
-//    	// inspect array elements
-//    	System.out.println("  Entries-> ");
-//    	for (int i = 0; i < arrLength; i++) {
-//    		Object arrValue = getArrayValue(array, i);
-//    		if(arrValue != null) {
-//    			// primitive object
-//    			if (arrValue.getClass().getComponentType().isPrimitive())
-//    				System.out.println(tmpTab + "   Value: " + arrValue);
-//    			// class object
-//    			else {
-//    				System.out.println(tmpTab + "   Value (ref): " + arrValue.getClass().getName() + Integer.toHexString(obj.hashCode()) );
-//    				
-//    				// inspect class if recursive true 
-//    				if (recursive) {
-//    					System.out.println("    -> Recursively inspect");
-//    					inspectClass(arrValue.getClass(), array, recursive, depth+1);
-//    				}
-//    			}
-//    				
-//    		}else {
-//    			System.out.println(tmpTab + "   Value: null"); 
-//    		}
-//    		
-//    	}
     }
     
     private void inspectArray(Class<?> c, Object obj, boolean recursive, int depth) {
@@ -350,7 +321,7 @@ public class Inspector {
     	// inspect array elements
     	System.out.println(tmpTab + "  Entries-> ");
     	for (int i = 0; i < arrLength; i++) {
-    		Object arrValue = getArrayValue(obj, i);
+    		Object arrValue = Array.get(obj, i);
     		if(arrValue != null) {
     			// primitive object
     			if (c.getComponentType().isPrimitive())
